@@ -37,38 +37,35 @@ ReaderTaskEither<Dict, String, List<String>> requestWithReader() => ReaderTaskEi
   }).run();
 });
 
-TaskEither<String, List<String>> request(){
-  return TaskEither.tryCatch(() async {
-    final Response response = await dio.get(
-      URL_CORRECT,
-        queryParameters: {
-          'country':'Canada'
-          }
-    );
+// TaskEither<String, List<String>> request(){
+//   return TaskEither.tryCatch(() async {
+//     final Response response = await dio.get(
+//       URL_CORRECT,
+//         queryParameters: {
+//           'country':'Canada'
+//           }
+//     );
 
-    final List<String> returnList = [];
-    final data = response.data as List<dynamic>;
+//     final List<String> returnList = [];
+//     final data = response.data as List<dynamic>;
 
-    for(int i=0;i<data.length;i++){
-          final univer = data[i] as Map<String,dynamic>;
-          returnList.add(univer['name']);
-    }
+//     for(int i=0;i<data.length;i++){
+//           final univer = data[i] as Map<String,dynamic>;
+//           returnList.add(univer['name']);
+//     }
 
-    return returnList;
-  },
-  (e,s){
-    return '$e\n$s';
-  });
-}
+//     return returnList;
+//   },
+//   (e,s){
+//     return '$e\n$s';
+//   });
+// }
 
 void main() async{
-  final fetch = requestWithReader();
+  final fetch = await requestWithReader().run(Dict());
 
-  final task = fetch.getOrElse((v){
+  print(fetch.getOrElse((s){
+    print(s);
     return [];
-  });
-
-  final result = await task.run(Dict());
-
-  print(result);
+  }));
 }
