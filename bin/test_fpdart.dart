@@ -8,12 +8,10 @@ final URL_ERROR_404 = 'http://universities.hipolabs.com/sarch';
 // ignore: non_constant_identifier_names
 final URL_CORRECT = 'http://universities.hipolabs.com/search';
 
-Future<Either<String, List<String>>> request() async {
-  Either<String, List<String>> returnEither;
-
-  try{
-    final response = await dio.get(
-      URL_ERROR_404,
+TaskEither<String, List<String>> request(){
+  return TaskEither.tryCatch(() async {
+    final Response response = await dio.get(
+      URL_CORRECT,
         queryParameters: {
           'country':'Canada'
           }
@@ -27,21 +25,18 @@ Future<Either<String, List<String>>> request() async {
           returnList.add(univer['name']);
     }
 
-    returnEither = Right(returnList);
-  } catch(e,s){
-    returnEither = Left('$e\n$s');
-  }
-
-  return returnEither;
+    return returnList;
+  },
+  (e,s){
+    return '$e\n$s';
+  });
 }
 
 void main() async{
-  final either = await request();
-  
-  print(
-    either.getOrElse((s){
-      print(s);
-      return [];
-    })
-  );
+  final fetch = await request().run();
+
+  print(fetch.getOrElse((str){
+    print(str);
+    return [];
+  }));
 }
