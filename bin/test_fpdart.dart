@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:fpdart/fpdart.dart';
 import 'package:dio/dio.dart';
 
@@ -13,7 +15,7 @@ Future<Either<String, List<String>>> request() async {
 
   try{
     final response = await dio.get(
-      dictUrl['404']!,
+      dictUrl['200']!,
         queryParameters: {
           'country':'Canada'
           }
@@ -38,16 +40,22 @@ Future<Either<String, List<String>>> request() async {
 void main() async{
   final either = await request();
 
-  final option = Option.fromEither(either);
-
-  final optionLength = option.flatMap((l){
-    return Option.of(l.length);
-  });
-
-  final Option<String> optionCheck = optionLength.map((len){
-    if(len>100)return "Больше 100!";
-    return "Меньше 100!";
-  });
-
-  print(optionCheck.getOrElse(()=>"error"));
+  print(Option
+  .fromEither(either)
+  .flatMap((list){
+    print("head:${list.head.getOrElse(()=>"")}");
+    return Option.of(list);
+  })
+  .flatMap((list){
+    print("len : ${list.length}");
+    return Option.of(list.length);
+  })
+  .flatMap((len){
+    final check  = (len>100)? "Больше 100!": "Меньше 100!";
+    return Option.of(check);
+  })
+  .getOrElse((){
+    return "error";
+  })
+  );
 }
