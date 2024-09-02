@@ -3,17 +3,17 @@ import 'package:dio/dio.dart';
 
 final dio = Dio();
 
-// ignore: non_constant_identifier_names
-final URL_ERROR_404 = 'http://universities.hipolabs.com/sarch';
-// ignore: non_constant_identifier_names
-final URL_CORRECT = 'http://universities.hipolabs.com/search';
+const Map<String, String> dictUrl = {
+  '404':'http://universities.hipolabs.com/sarch',
+  '200':'http://universities.hipolabs.com/search'
+};
 
 Future<Either<String, List<String>>> request() async {
   Either<String, List<String>> returnEither;
 
   try{
     final response = await dio.get(
-      URL_ERROR_404,
+      dictUrl['404']!,
         queryParameters: {
           'country':'Canada'
           }
