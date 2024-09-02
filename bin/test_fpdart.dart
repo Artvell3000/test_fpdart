@@ -10,17 +10,23 @@ const Map<String, String> dictUrl = {
   '200':'http://universities.hipolabs.com/search'
 };
 
-Future<Either<String, List<String>>> request() async {
-  Either<String, List<String>> returnEither;
-
-  try{
-    final response = await dio.get(
+Future<Response<dynamic>> requestUniver() async{
+  return dio.get(
       dictUrl['200']!,
         queryParameters: {
           'country':'Canada'
           }
     );
+}
 
+TaskOption<Response<dynamic>> request(){
+  return TaskOption.tryCatch(requestUniver);
+}
+
+Future<Option<List<String>>> parse()async {
+  final json = await request().run();
+
+  return json.map((response){
     final List<String> returnList = [];
     final data = response.data as List<dynamic>;
 
@@ -29,19 +35,14 @@ Future<Either<String, List<String>>> request() async {
           returnList.add(univer['name']);
     }
 
-    returnEither = Right(returnList);
-  } catch(e,s){
-    returnEither = Left('$e\n$s');
-  }
-
-  return returnEither;
+    return returnList;
+  });
 }
 
 void main() async{
-  final either = await request();
+  final option = await parse();
 
-  print(Option
-  .fromEither(either)
+  print(option
   .flatMap((list){
     print("head:${list.head.getOrElse(()=>"")}");
     return Option.of(list);
