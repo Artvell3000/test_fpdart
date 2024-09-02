@@ -10,6 +10,11 @@ const Map<String, String> dictUrl = {
   '200':'http://universities.hipolabs.com/search'
 };
 
+class Dict {
+  static const u200 = 'http://universities.hipolabs.com/search';
+  static const u404 = 'http://universities.hipolabs.com/sarch';
+}
+
 Future<Response<dynamic>> requestUniver() async{
   return dio.get(
       dictUrl['200']!,
