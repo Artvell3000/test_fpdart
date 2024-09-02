@@ -37,11 +37,17 @@ Future<Either<String, List<String>>> request() async {
 
 void main() async{
   final either = await request();
-  
-  print(
-    either.getOrElse((s){
-      print(s);
-      return [];
-    })
-  );
+
+  final option = Option.fromEither(either);
+
+  final optionLength = option.flatMap((l){
+    return Option.of(l.length);
+  });
+
+  final Option<String> optionCheck = optionLength.map((len){
+    if(len>100)return "Больше 100!";
+    return "Меньше 100!";
+  });
+
+  print(optionCheck.getOrElse(()=>"error"));
 }
